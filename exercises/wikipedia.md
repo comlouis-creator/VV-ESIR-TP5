@@ -12,3 +12,51 @@ The process is as follows:
 Include the code of the walker and the snapshot in this document.
 
 ## Answer
+
+Pour créer un petit programme utilisant Selenium qui navigue vers une séquence de liens aléatoires sur la page principale de Wikipédia, prend un instantané de la dernière page et enregistre l'instantané, on peut utiliser l'interface WebDriver pour contrôler un navigateur Web et l'interface TakesScreenshot pour prendre un instantané de la page actuelle.
+
+Voici un exemple de la façon dont cela peut être fait :
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+import java.io.File;
+import java.util.*;
+
+public class WikipediaWalker {
+
+    public static void main(String[] args) {
+        // Create a new ChromeDriver instance
+        WebDriver driver = new ChromeDriver();
+
+        // Navigate to the Wikipedia main page
+        driver.get("https://www.wikipedia.org/");
+
+        // Set of visited pages
+        Set<String> visitedPages = new HashSet<>();
+
+        // Select random links and navigate to them until 10 different pages have been visited
+        while (visitedPages.size() < 10) {
+            // Select a random link on the page
+            List<WebElement> links = driver.findElements(By.tagName("a"));
+            WebElement link = links.get(new Random().nextInt(links.size()));
+
+            // Navigate to the link
+            driver.navigate().to(link.getAttribute("href"));
+
+            // Add the current page to the set of visited pages
+            visitedPages.add(driver.getCurrentUrl());
+        }
+
+        // Take a snapshot of the current page
+        File screenshot = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+
+        // Save the snapshot to a file
+        screenshot.renameTo(new File("screenshot.png"));
+
+        // Close the driver
+        driver.close();
+    }
+}
+
+Dans cet exemple, la classe WikipediaWalker utilise l'interface WebDriver pour contrôler un navigateur Web Chrome et naviguer vers une séquence.
